@@ -1,10 +1,10 @@
 import dotenv
 
-from src.macros.unlock_device import unlock_android
+from src.libs.android import unlock
 
 
 def main():
-    unlock_android()
+    unlock()
 
 
 if __name__ == "__main__":

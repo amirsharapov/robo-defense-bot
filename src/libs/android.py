@@ -1,11 +1,20 @@
 import time
 
+import cv2
+
 from src import env
-from src.libs.adb import WakefulnessStates, send_power_keyevent, swipe
 from src.libs import adb
+from src.libs.adb import WakefulnessStates, send_power_keyevent, swipe
+from src.libs.io import TemporaryFile
 
 
-def unlock_android():
+def screenshot():
+    with TemporaryFile.random_filename() as file:
+        adb.screencap(file.path)
+        return cv2.imread(str(file.path))
+
+
+def unlock():
     dreaming_lockscreen = adb.get_dreaming_lockscreen()
     state = adb.get_wakefulness_state()
 
