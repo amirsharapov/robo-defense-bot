@@ -23,6 +23,22 @@ def locate_exit_anchor(image: ndarray | None = None):
     )
 
 
+def locate_start_game_button(image: ndarray | None = None):
+    if image is None:
+        image = screenshot()
+
+    template = str(get_templates_path() / 'basic_level/start_game_button.png')
+    template = cv2.imread(template)
+
+    return first_or_none(
+        match_template(
+            image=image,
+            template=template,
+            threshold=0.8
+        )
+    )
+
+
 def locate_gun_towers(image: ndarray | None = None):
     if image is None:
         image = screenshot()

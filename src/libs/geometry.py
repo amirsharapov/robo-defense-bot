@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+import numpy as np
+
 
 @dataclass
 class Rectangle:
@@ -52,3 +54,33 @@ class Point:
 
     def __getitem__(self, index):
         return tuple(self)[index]
+
+    def __hash__(self):
+        return hash((self.x, self.y))
+
+
+@dataclass
+class Line:
+    point1: Point
+    point2: Point
+
+    @property
+    def x1(self):
+        return self.point1.x
+
+    @property
+    def y1(self):
+        return self.point1.y
+
+    @property
+    def x2(self):
+        return self.point2.x
+
+    @property
+    def y2(self):
+        return self.point2.y
+
+    def linspace(self, steps: int):
+        xs = np.linspace(self.x1, self.x2, steps, dtype=int)
+        ys = np.linspace(self.y1, self.y2, steps, dtype=int)
+        return [Point(x, y) for x, y in zip(xs, ys)]

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import numpy as np
 import cv2
 
-from src.libs.shapes import Rectangle
+from src.libs.geometry import Rectangle
 
 
 def get_mask(image: np.ndarray):

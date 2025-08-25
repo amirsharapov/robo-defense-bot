@@ -3,7 +3,7 @@ import time
 import cv2
 
 from src import env
-from src.libs import adb
+from src.libs import adb, event_logger
 from src.libs.adb import WakefulnessStates, send_power_keyevent, swipe
 from src.libs.io import TemporaryFile
 
@@ -11,7 +11,9 @@ from src.libs.io import TemporaryFile
 def screenshot():
     with TemporaryFile.random_filename() as file:
         adb.screencap(file.path)
-        return cv2.imread(str(file.path))
+        image = cv2.imread(str(file.path))
+        event_logger.log_screenshot_event(image)
+        return image
 
 
 def unlock():
@@ -40,3 +42,7 @@ def unlock():
     adb.send_text(passcode)
     adb.send_enter_keyevent()
     time.sleep(1)
+
+
+def tap(x: int, y: int, *, debug_context: dict = None):
+    ...

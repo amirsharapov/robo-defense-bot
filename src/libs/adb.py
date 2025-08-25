@@ -28,13 +28,22 @@ class WakefulnessStates(BaseEnum):
         raise ValueError(f"Unknown wakefulness state: {value}.")
 
 
+class MotionEvents(BaseEnum):
+    DOWN = auto()
+    UP = auto()
+    MOVE = auto()
+    CANCEL = auto()
+
+
 def make_shell_input_tap_command(x: int, y: int) -> str:
     cmd = f'{ADB_EXE} shell input tap {x} {y}'
     return cmd
 
 
-def make_shell_input_swipe_command(x1: int, y1: int, x2: int, y2: int) -> str:
+def make_shell_input_swipe_command(x1: int, y1: int, x2: int, y2: int, duration_ms: int = None) -> str:
     cmd = f'{ADB_EXE} shell input swipe {x1} {y1} {x2} {y2}'
+    if duration_ms is not None:
+        cmd += f' {duration_ms}'
     return cmd
 
 
@@ -50,6 +59,11 @@ def make_shell_input_keyevent_command(keyevent: str) -> str:
 
 def make_dumpsys_command_with_grep(service: str, grep: str) -> str:
     cmd = f'{ADB_EXE} shell dumpsys {service} | grep -E "{grep}"'
+    return cmd
+
+
+def make_motion_event_command(motion_event: MotionEvents, x: int, y: int) -> str:
+    cmd = f'{ADB_EXE} shell input motionevent {motion_event.name.lower()} {x} {y}'
     return cmd
 
 
@@ -78,8 +92,18 @@ def send_enter_keyevent():
     send_keyevent('66')
 
 
-def swipe(x1: int, y1: int, x2: int, y2: int):
-    cmd = make_shell_input_swipe_command(x1, y1, x2, y2)
+def swipe(x1: int, y1: int, x2: int, y2: int, duration_ms: int = 500):
+    cmd = make_shell_input_swipe_command(x1, y1, x2, y2, duration_ms)
+    execute_command(cmd)
+
+
+def tap(x: int, y: int):
+    cmd = make_shell_input_tap_command(x, y)
+    execute_command(cmd)
+
+
+def send_motion_event(motion_event: MotionEvents, x: int, y: int):
+    cmd = make_motion_event_command(motion_event, x, y)
     execute_command(cmd)
 
 
