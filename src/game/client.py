@@ -95,7 +95,7 @@ def place_tower(
         start.y,
     )
 
-    points = line.linspace(steps=10)
+    points = line.linspace(steps=5)
     for point in points:
         send_motion_event(
             MotionEvents.MOVE,

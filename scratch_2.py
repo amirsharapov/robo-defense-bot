@@ -5,7 +5,7 @@ from src.libs.android import screenshot
 
 def screenshot_for_test():
     data = screenshot()
-    cv2.imwrite('screenshot.png', data)
+    cv2.imwrite('screenshot3.png', data)
 
 
 if __name__ == "__main__":
