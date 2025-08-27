@@ -1,0 +1,26 @@
+$ meta:
+
+- name: phase_1
+- description: Initial placement of gun turrets for land defense prior to turning on fast forward.
+
+$ final_state:
+
+   .   .gu1.gu1.   .   .   .   .   .   .   .   .   .   .   .   .   .   .
+   .   .   .   .gu1.   .   .   .   .   .   .   .   .   .   .   .   .   .
+   .   .gu3.   .sl1.   .   .   .   .   .   .   .   .   .   .   .   .   .
+   .   .gu3.   .gu1.   .   .   .   .   .   .   .   .   .   .   .   .   .
+   .   .sl3.   .gu1.   .   .   .   .   .   .   .   .   .   .   .   .   .
+   .   .gu3.   .gu1.   .   .   .   .   .   .   .   .   .   .   .   .   .
+gu1.gu1.   .   .sl1.   .   .   .   .   .   .   .   .   .   .   .   .   .
+   .   .   .   .gu1.   .gu1.   .   .   .   .   .   .   .   .   .   .   .
+   .   .   .   .   .   .sl1.   .   .   .   .   .   .   .   .   .   .   .
+   .   .   .   .gu1.gu1.   .   .   .   .   .   .   .   .   .   .   .   .
+
+$ update_order:
+
+- row:6     col:0-1
+- row:5-0   col:2
+- row:0     col:3
+- row:0-9   col:4
+- row:9     col:5
+- row:8-7   col:6

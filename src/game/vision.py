@@ -3,7 +3,7 @@ from numpy import ndarray
 
 from src.libs.android import screenshot
 from src.libs.utils import first_or_none
-from src.libs.vision import match_template
+from src.libs.vision import match_template, get_mask
 from src.paths import get_templates_path
 
 
@@ -75,4 +75,21 @@ def locate_slow_towers(image: ndarray | None = None):
     return match_template(
         image=image,
         template=template
+    )
+
+
+def locate_you_win_message(image: ndarray | None = None):
+    if image is None:
+        image = screenshot()
+
+    template = str(get_templates_path() / 'you_win_message.png')
+    template = cv2.imread(template, cv2.IMREAD_UNCHANGED)
+
+    return first_or_none(
+        match_template(
+            image=image,
+            template=template,
+            threshold=0.6,
+            use_mask=True
+        )
     )

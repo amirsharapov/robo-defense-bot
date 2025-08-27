@@ -1,25 +1,31 @@
 import time
+from dataclasses import dataclass
 
 from src.game.constants import PAUSE_POSITION, GUN_TOWER_POSITION, ROCKET_TOWER_POSITION, SLOW_TOWER_POSITION, \
     FAST_FORWARD_POSITION, UPGRADE_GUN_TOWER_TO_2_POSITION, UPGRADE_GUN_TOWER_TO_3_POSITION
-from src.game.enums import Towers, Upgrades
-from src.game.grid import generate_grid, AnchorTypes
+from src.game.grid import generate_grid, AnchorTypes, GridTile
+from src.game.towers import get_tower
 from src.game.vision import locate_exit_anchor, locate_start_game_button
-from src.libs.adb import tap, swipe, send_motion_event, MotionEvents
+from src.libs.adb import tap, send_motion_event, MotionEvents
 from src.libs.android import screenshot
-from src.libs.geometry import Rectangle, Line, Point
+from src.libs.geometry import Line, Point
 
-_grid: list[list[Rectangle]] | None = None
+# used to store the grid of tiles and associated towers in memory
+_tile_grid: list[list[GridTile]] | None = None
 
 
-def get_grid():
-    global _grid
-    if not _grid:
-        _grid = generate_grid(
+def get_tile_grid():
+    global _tile_grid
+
+    anchor = locate_exit_anchor()
+
+    if not _tile_grid:
+        _tile_grid = generate_grid(
             AnchorTypes.EXIT,
-            locate_exit_anchor().rect
+            anchor.rect
         )
-    return _grid
+
+    return _tile_grid
 
 
 def start_game():
@@ -37,8 +43,8 @@ def start_game():
 
 
 def adjust_screen():
-    global _grid
-    _grid = None
+    global _tile_grid
+    _tile_grid = None
 
 
 def toggle_pause_button():
@@ -51,48 +57,33 @@ def toggle_fast_forward_button():
     tap(x, y)
 
 
-def place_towers(place_tower_args: list[tuple[int, int, str | Towers]]):
-    for tile_row_index, tile_col_index, tower_type in place_tower_args:
-        place_tower(
-            tile_row_index,
-            tile_col_index,
-            tower_type
-        )
-
-
 def place_tower(
         tile_row_index: int,
         tile_col_index: int,
-        tower: str | Towers
+        tower_id: str
 ):
-    if isinstance(tower, str):
-        tower = Towers(tower.upper())
+    tower = get_tower(tower_id)
 
-    grid = get_grid()
+    assert tower.category_id in ('gu', 'ro', 'sl'), f"Cannot place tower of type {tower.category_id}"
+
+    grid = get_tile_grid()
     tile = grid[tile_row_index][tile_col_index]
 
     tower_x, tower_y = {
-        Towers.GUN: GUN_TOWER_POSITION,
-        Towers.ROCKET: ROCKET_TOWER_POSITION,
-        Towers.SLOW: SLOW_TOWER_POSITION
-    }[tower]
+        'gu': GUN_TOWER_POSITION,
+        'ro': ROCKET_TOWER_POSITION,
+        'sl': SLOW_TOWER_POSITION
+    }[tower.category_id]
 
-    start = Point(
-        tower_x,
-        tower_y
+    line = Line(
+        Point(tower_x, tower_y),
+        tile.rect.center.translated(dy=50)
     )
-
-    end = Point(
-        tile.center.x,
-        tile.center.y + 50
-    )
-
-    line = Line(start, end)
 
     send_motion_event(
         MotionEvents.DOWN,
-        start.x,
-        start.y,
+        line.point1.x,
+        line.point1.y,
     )
 
     points = line.linspace(steps=5)
@@ -106,86 +97,85 @@ def place_tower(
     time.sleep(0.2)
     send_motion_event(
         MotionEvents.UP,
-        end.x,
-        end.y
+        line.point2.x,
+        line.point2.y
     )
 
-    # TODO Store in memory tower is placed
-
     time.sleep(0.2)
-
-
-def upgrade_towers(upgrade_tower_args: list[tuple[int, int, list[str | Upgrades]]]):
-    for tile_row_index, tile_col_index, upgrades in upgrade_tower_args:
-        upgrade_tower(
-            tile_row_index,
-            tile_col_index,
-            upgrades
-        )
 
 
 def upgrade_tower(
         tile_row_index: int,
         tile_col_index: int,
-        upgrades: list[str | Upgrades]
+        source_tower_id: str,
+        target_tower_id: str,
 ):
-    for i, upgrade in enumerate(upgrades):
-        if isinstance(upgrade, str):
-            upgrades[i] = Upgrades(upgrade.upper())
-
-    grid = get_grid()
+    grid = get_tile_grid()
     tile = grid[tile_row_index][tile_col_index]
 
-    # TODO validate the tower type and current level
+    tower = get_tower(source_tower_id)
 
-    for upgrade in upgrades:
-        tap(
-            tile.center.x,
-            tile.center.y
-        )
+    upgrade_option = tower.get_upgrade_option(target_tower_id)
+    assert upgrade_option is not None, f"Cannot upgrade from {source_tower_id} to {target_tower_id}"
 
-        time.sleep(0.5)
+    x, y = tile.rect.center
+    tap(x, y)
 
-        upgrade_button_xy = {
-            Upgrades.GUN_2: UPGRADE_GUN_TOWER_TO_2_POSITION,
-            Upgrades.GUN_3: UPGRADE_GUN_TOWER_TO_3_POSITION
-        }[upgrade]
+    time.sleep(0.5)
 
-        tap(
-            upgrade_button_xy[0],
-            upgrade_button_xy[1]
-        )
+    x, y = upgrade_option.position_xy
+    tap(x, y)
 
-        time.sleep(0.5)
+    time.sleep(0.5)
 
 
-def place_and_upgrade_tower(
-        tile_row_index: int,
-        tile_col_index: int,
-        tower: str | Towers,
-        upgrades: list[str | Upgrades]
+def update_tile(
+        row_i: int,
+        col_i: int,
+        target_tower_id: str | None
 ):
-    place_tower(
-        tile_row_index,
-        tile_col_index,
-        tower
-    )
+    tiles = get_tile_grid()
+    source_tower = tiles[row_i][col_i].tower
+    target_tower = get_tower(target_tower_id)
 
-    if upgrades:
+    upgrade_path = target_tower.upgrade_path
+
+    if source_tower is None:
+        first_tower = upgrade_path[0]
+        place_tower(
+            row_i,
+            col_i,
+            first_tower.id
+        )
+        current_tower = first_tower
+        upgrade_i = 0
+        tiles[row_i][col_i].tower_id = first_tower.id
+
+    else:
+        assert source_tower in upgrade_path, f"Cannot upgrade from {source_tower.id} to {target_tower.id}"
+        current_tower = source_tower
+        upgrade_i = upgrade_path.index(source_tower)
+
+    upgrade_path = upgrade_path[upgrade_i + 1:]
+
+    if not upgrade_path:
+        return
+
+    for tower in upgrade_path:
         upgrade_tower(
-            tile_row_index,
-            tile_col_index,
-            upgrades
+            row_i,
+            col_i,
+            current_tower.id,
+            tower.id
         )
+        tiles[row_i][col_i].tower_id = tower.id
+        current_tower = tower
 
 
-def place_and_upgrade_towers(
-        place_and_upgrade_tower_args: list[tuple[int, int, str | Towers, list[str | Upgrades]]]
-):
-    for tile_row_index, tile_col_index, tower_type, upgrades in place_and_upgrade_tower_args:
-        place_and_upgrade_tower(
-            tile_row_index,
-            tile_col_index,
-            tower_type,
-            upgrades
+def update_tiles(list_of_args: list[tuple]):
+    for row_i, col_i, target_tower_id in list_of_args:
+        update_tile(
+            row_i,
+            col_i,
+            target_tower_id
         )

@@ -58,6 +58,9 @@ class Point:
     def __hash__(self):
         return hash((self.x, self.y))
 
+    def translated(self, dx: int = 0, dy: int = 0) -> 'Point':
+        return Point(self.x + dx, self.y + dy)
+
 
 @dataclass
 class Line:

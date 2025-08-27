@@ -36,6 +36,7 @@ def match_template(
         image: np.ndarray,
         template: np.ndarray,
         threshold: float = 0.9,
+        use_mask: np.ndarray | None = None,
         method: int = cv2.TM_CCOEFF_NORMED,
         region: Rectangle | None = None,
         convert_image_to_gray: bool = True,
@@ -47,10 +48,17 @@ def match_template(
     # make a copy to avoid modifying the original image
     image = image.copy()
 
+    # if we use mask, create the mask and image have 4 channels
+    if use_mask:
+        mask = get_mask(template)
+        if template.shape[2] == 3:
+            template = cv2.cvtColor(template, cv2.COLOR_BGR2BGRA)
+    else:
+        mask = None
+
     # grayscale is known to work better for template matching. Convert unless specified otherwise
     if convert_image_to_gray:
         image = convert_bgr_to_gray(image)
-
     if convert_template_to_gray:
         template = convert_bgr_to_gray(template)
 
@@ -69,7 +77,9 @@ def match_template(
     result = cv2.matchTemplate(
         search_space,
         template,
-        method
+        method,
+        None,
+        mask
     )
 
     result = np.where(np.isfinite(result), result, 0)
@@ -114,7 +124,9 @@ def match_template(
 
     # normalize rectangles for grouping
     rects = [[r.x, r.y, r.w, r.h] for r in rects]
-    rects, _ = cv2.groupRectangles(rects, groupThreshold=1, eps=0.3)
+
+    if len(rects) > 1:
+        rects, _ = cv2.groupRectangles(rects, groupThreshold=1, eps=0.3)
 
     for (x, y, w, h) in rects:
         rect = Rectangle(x=x, y=y, w=w, h=h)
