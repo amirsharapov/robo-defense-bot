@@ -1,7 +1,6 @@
 from src.game import vision
-from src.game.client import (
-    toggle_fast_forward_button
-)
+from src.game.controls import toggle_fast_forward_button
+
 
 def main():
     match = vision.locate_you_win_message()

@@ -1,4 +1,4 @@
-from src.game import client
+from src.game import client, controls
 from src.libs import android
 
 
@@ -27,7 +27,7 @@ def play_basic_level():
     ])
 
     # break for fast-forward button
-    client.toggle_fast_forward_button()
+    controls.toggle_fast_forward_button()
 
     # next line of towers to keep path blocked
     client.update_tiles([

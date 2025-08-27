@@ -21,7 +21,7 @@ class GridTile:
         return get_tower(self.tower_id)
 
 
-def generate_grid(anchor: AnchorTypes, anchor_rect: Rectangle):
+def generate_tile_grid(anchor: AnchorTypes, anchor_rect: Rectangle):
     assert anchor == AnchorTypes.EXIT, "Currently only EXIT anchor is supported"
 
     n_cols = 18
