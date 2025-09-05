@@ -42,6 +42,12 @@ class Rectangle:
     def to_xyxy(self):
         return self.x1, self.y1, self.x2, self.y2
 
+    def overwrite(self, other: 'Rectangle'):
+        self.x = other.x
+        self.y = other.y
+        self.w = other.w
+        self.h = other.h
+
 
 @dataclass
 class Point:

@@ -1,20 +1,7 @@
 from src.game import client, controls
-from src.libs import android
 
 
-def play_basic_level():
-    # unlock if not unlocked
-    android.unlock()
-
-    # launch the game
-    # client.launch()
-
-    # new game
-    # client.start_new_game()
-
-    # place towers
-    # todo: according to the map plan pulled from game files. not done right now
-
+def place_towers_for_basic_level():
     # the first towers placed
     client.update_tiles([
         (6, 0, 'gu1'),

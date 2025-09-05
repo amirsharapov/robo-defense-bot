@@ -11,6 +11,8 @@ from src.libs import adb, event_logger
 from src.libs.adb import WakefulnessStates, send_power_keyevent, swipe
 from src.libs.enums import BaseEnum
 from src.libs.io import TemporaryFile
+from src.libs.utils import first_or_none
+from src.libs.vision import match_template
 
 
 class ScreenshotStrategies(BaseEnum):
@@ -53,6 +55,41 @@ def screenshot_with_api(quality: int = 100):
     return image
 
 
+def accept_tablet_data_permissions():
+    image = screenshot()
+
+    match = first_or_none(
+        match_template(
+            image=image,
+            template=cv2.imread('data/src/templates/android/allow_access_to_tablet_data_prompt.png'),
+            threshold=0.8
+        )
+    )
+
+    if not match:
+        return
+
+    match = first_or_none(
+        match_template(
+            image=image,
+            template=cv2.imread('data/src/templates/android/allow_access_to_tablet_data_prompt_allow_button.png'),
+            threshold=0.8,
+            region=match.rectangle
+        )
+    )
+
+    if not match:
+        return
+
+    x, y = match.rect.center
+    adb.tap(x, y)
+
+
+def go_to_home_screen():
+    adb.send_home_keyevent()
+    time.sleep(1)
+
+
 def unlock():
     dreaming_lockscreen = adb.get_dreaming_lockscreen()
     state = adb.get_wakefulness_state()
@@ -84,9 +121,17 @@ def unlock():
 def setup_screenshot_api_port_forwarding():
     local_port = env.SCREENSHOT_API_URL.get().split(':')[-1]
     device_port = 8080
-    result = adb.forward(local_port, device_port)
+    result = None
+
+    for i in range(2):
+        try:
+            result = adb.forward(local_port, device_port)
+        except Exception as e:
+            print(f"Attempt {i + 1} failed: {e}")
+            time.sleep(1)
+
     print(result.stdout)
 
 
-def tap(x: int, y: int, *, debug_context: dict = None):
-    ...
+MAX_X = 1340
+MAX_Y = 800

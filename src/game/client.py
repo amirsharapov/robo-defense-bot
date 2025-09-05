@@ -1,24 +1,41 @@
-from src.game.controls import place_tower, upgrade_tower
-from src.game.grid import GridTile, generate_tile_grid, AnchorTypes
+from src.game import controls, state
+from src.game.controls import place_tower, upgrade_tower, tap_start_game_button, tap_new_game_button
+from src.game.grid import AnchorTypes
+from src.game.state import get_tile_grid, get_camera_position, CameraPositions, set_camera_position
 from src.game.towers import get_tower
 from src.game.vision import locate_exit_anchor
 
 
-_tile_grid: list[list['GridTile']] | None = None
+def update_camera_position_to_fit_row_on_screen(
+        row_i: int
+):
+    camera_position = get_camera_position()
 
+    threshold_top = 2
+    threshold_bottom = 6
 
-def get_tile_grid():
-    global _tile_grid
+    if threshold_top < row_i < threshold_bottom:
+        return
 
-    anchor = locate_exit_anchor()
+    if row_i <= threshold_top:
+        if camera_position == CameraPositions.TOP:
+            return
 
-    if not _tile_grid:
-        src.game.client._tile_grid = generate_tile_grid(
-            AnchorTypes.EXIT,
-            anchor.rect
-        )
+        controls.swipe('down')
+        state.update_tile_grid_positions()
+        set_camera_position(CameraPositions.TOP)
+        return
 
-    return _tile_grid
+    if row_i >= threshold_bottom:
+        if camera_position == CameraPositions.BOTTOM:
+            return
+
+        controls.swipe('up')
+        state.update_tile_grid_positions()
+        set_camera_position(CameraPositions.BOTTOM)
+        return
+
+    print(f"Could not adjust camera for row {row_i}")
 
 
 def update_tile(
@@ -26,6 +43,8 @@ def update_tile(
         col_i: int,
         target_tower_id: str | None
 ):
+    update_camera_position_to_fit_row_on_screen(row_i)
+
     tiles = get_tile_grid()
     source_tower = tiles[row_i][col_i].tower
     target_tower = get_tower(target_tower_id)
@@ -71,3 +90,8 @@ def update_tiles(list_of_args: list[tuple]):
             col_i,
             target_tower_id
         )
+
+
+def start_new_game(level: int = 10):
+    tap_new_game_button()
+    tap_start_game_button()

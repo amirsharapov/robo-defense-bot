@@ -4,8 +4,6 @@ from pathlib import Path
 from src.libs.enums import BaseEnum
 from src.libs.subprocess import execute_command
 
-MAX_X = 1340
-MAX_Y = 800
 ADB_EXE = "~/Code/bin/platform-tools/adb"
 
 
@@ -152,3 +150,16 @@ def screencap(path: str | Path):
 def forward(local_port: int, device_port: int):
     cmd = make_forward_command(local_port, device_port)
     return execute_command(cmd)
+
+
+def send_home_keyevent():
+    return send_keyevent('KEYCODE_HOME')
+
+
+def send_back_keyevent():
+    return send_keyevent('KEYCODE_BACK')
+
+
+def send_monkey_event(package_name: str, category_name: str, count: int = 1):
+    cmd = f'{ADB_EXE} shell monkey -p {package_name} -c {category_name} {count}'
+    return execute_command(cmd, raise_error=False)

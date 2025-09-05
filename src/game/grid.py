@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from enum import auto
-from functools import cached_property
 
 from src.game.towers import get_tower
 from src.libs.enums import BaseEnum
@@ -14,15 +13,28 @@ class AnchorTypes(BaseEnum):
 @dataclass
 class GridTile:
     rect: Rectangle
-    tower_id: str
+    tower_id: str | None
 
-    @cached_property
+    @property
     def tower(self):
         return get_tower(self.tower_id)
 
 
-def generate_tile_grid(anchor: AnchorTypes, anchor_rect: Rectangle):
-    assert anchor == AnchorTypes.EXIT, "Currently only EXIT anchor is supported"
+def update_tile_grid_positions(grid: list[list[GridTile]], anchor_type: AnchorTypes, anchor_rect: Rectangle):
+    assert anchor_type == AnchorTypes.EXIT, "Currently only EXIT anchor is supported"
+
+    new_grid = generate_tile_grid(
+        anchor_type,
+        anchor_rect
+    )
+
+    for row_i, row in enumerate(grid):
+        for col_i, tile in enumerate(row):
+            tile.rect.overwrite(new_grid[row_i][col_i].rect)
+
+
+def generate_tile_grid(anchor_type: AnchorTypes, anchor_rect: Rectangle):
+    assert anchor_type == AnchorTypes.EXIT, "Currently only EXIT anchor is supported"
 
     n_cols = 18
     n_rows = 10
@@ -46,7 +58,7 @@ def generate_tile_grid(anchor: AnchorTypes, anchor_rect: Rectangle):
                         w=66,
                         h=66
                     ),
-                    tower_id=''
+                    tower_id=None
                 )
             )
         matrix.append(row)

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class ExecCmdResponse:
+class ExecuteCommnadResponse:
     cmd: str
     did_communicate: bool
     process: subprocess.Popen
@@ -16,17 +16,12 @@ class ExecCmdResponse:
         return self.process.returncode
 
 
-
-def execute_command(command: str):
-    return exec_cmd(command, wait=True)
-    # try:
-    #     result = subprocess.run(command, shell=True, check=True, text=True, capture_output=True)
-    #     return result.stdout.strip()
-    # except subprocess.CalledProcessError as e:
-    #     raise RuntimeError(f"Command '{command}' failed with error: {e.stderr.strip()}") from e
-
-
-def exec_cmd(cmd: str, wait: bool, strip_output: bool = True) -> ExecCmdResponse:
+def execute_command(
+        cmd: str,
+        wait: bool = True,
+        strip_output: bool = True,
+        raise_error: bool = True
+) -> ExecuteCommnadResponse:
     process = subprocess.Popen(
         cmd,
         shell=True,
@@ -37,7 +32,7 @@ def exec_cmd(cmd: str, wait: bool, strip_output: bool = True) -> ExecCmdResponse
     )
 
     if not wait:
-        return ExecCmdResponse(
+        return ExecuteCommnadResponse(
             cmd=cmd,
             did_communicate=False,
             process=process
@@ -53,10 +48,10 @@ def exec_cmd(cmd: str, wait: bool, strip_output: bool = True) -> ExecCmdResponse
         if stderr:
             stderr = stderr.strip()
 
-    if process.returncode != 0 or stderr:
+    if raise_error and (process.returncode != 0 or stderr):
         raise RuntimeError(f"Command '{cmd}' failed with error: {stderr}")
 
-    return ExecCmdResponse(
+    return ExecuteCommnadResponse(
         cmd=cmd,
         did_communicate=True,
         process=process,
