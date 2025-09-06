@@ -6,10 +6,11 @@ import cv2
 import numpy as np
 import requests
 
-from src import env
+from src import env, templates
 from src.libs import adb, event_logger
-from src.libs.adb import WakefulnessStates, send_power_keyevent, swipe
+from src.libs.adb import WakefulnessStates, send_power_keyevent, swipe, MotionEvents
 from src.libs.enums import BaseEnum
+from src.libs.geometry import Point, Line
 from src.libs.io import TemporaryFile
 from src.libs.utils import first_or_none
 from src.libs.vision import match_template
@@ -58,22 +59,24 @@ def screenshot_with_api(quality: int = 100):
 def accept_tablet_data_permissions():
     image = screenshot()
 
+    template = templates.get_template_by_name('android/prompts/allow_access_to_tablet_data/prompt.png')
     match = first_or_none(
         match_template(
             image=image,
-            template=cv2.imread('data/src/templates/android/allow_access_to_tablet_data_prompt.png'),
-            threshold=0.8
+            template=template.read_image(),
+            threshold=template.threshold
         )
     )
 
     if not match:
         return
 
+    template = templates.get_template_by_name('android/prompts/allow_access_to_tablet_data/allow_button.png')
     match = first_or_none(
         match_template(
             image=image,
-            template=cv2.imread('data/src/templates/android/allow_access_to_tablet_data_prompt_allow_button.png'),
-            threshold=0.8,
+            template=template.read_image(),
+            threshold=template.threshold,
             region=match.rectangle
         )
     )
@@ -90,13 +93,18 @@ def go_to_home_screen():
     time.sleep(1)
 
 
-def unlock():
+def go_back():
+    adb.send_back_keyevent()
+    time.sleep(1)
+
+
+def unlock() -> bool:
     dreaming_lockscreen = adb.get_dreaming_lockscreen()
     state = adb.get_wakefulness_state()
 
     if state == WakefulnessStates.AWAKE and not dreaming_lockscreen:
         print("Device is already awake and unlocked.")
-        return
+        return False
 
     if state == WakefulnessStates.DOZING or state == WakefulnessStates.ASLEEP:
         print("Device is dozing, waking it up.")
@@ -117,6 +125,8 @@ def unlock():
     adb.send_enter_keyevent()
     time.sleep(1)
 
+    return True
+
 
 def setup_screenshot_api_port_forwarding():
     local_port = env.SCREENSHOT_API_URL.get().split(':')[-1]
@@ -131,6 +141,80 @@ def setup_screenshot_api_port_forwarding():
             time.sleep(1)
 
     print(result.stdout)
+
+
+def tap_middle_of_screen():
+    tap_point(
+        Point(
+            MAX_X // 2,
+            MAX_Y // 2
+        )
+    )
+
+
+def tap_point(point: Point):
+    adb.tap(point.x, point.y)
+
+
+def swipe_using_motion_events(x1: int, y1: int, x2: int, y2: int, steps: int = 10, delay_between_steps: float = 0.01):
+    line = Line(
+        point1=Point(x1, y1),
+        point2=Point(x2, y2)
+    )
+
+    adb.send_motion_event(
+        MotionEvents.DOWN,
+        line.point1.x,
+        line.point1.y
+    )
+
+    time.sleep(0.2)
+
+    points = line.linspace(steps=steps)
+    for point in points:
+        adb.send_motion_event(
+            MotionEvents.MOVE,
+            int(point.x),
+            int(point.y)
+        )
+        time.sleep(delay_between_steps)
+
+    time.sleep(0.2)
+    adb.send_motion_event(
+        MotionEvents.UP,
+        line.point2.x,
+        line.point2.y
+    )
+
+    time.sleep(0.2)
+
+
+def swipe_towards_direction(direction: str | Literal['up', 'down', 'left', 'right']):
+    center_x = MAX_X // 2
+    center_y = MAX_Y // 2
+    offset = 250
+
+    if direction == 'up':
+        start = Point(center_x, center_y + offset)
+        end = Point(center_x, center_y - offset)
+    elif direction == 'down':
+        start = Point(center_x, center_y - offset)
+        end = Point(center_x, center_y + offset)
+    elif direction == 'left':
+        start = Point(center_x + offset, center_y)
+        end = Point(center_x - offset, center_y)
+    elif direction == 'right':
+        start = Point(center_x - offset, center_y)
+        end = Point(center_x + offset, center_y)
+    else:
+        raise ValueError(f'Unknown direction: {direction}')
+
+    swipe_using_motion_events(
+        start.x,
+        start.y,
+        end.x,
+        end.y
+    )
 
 
 MAX_X = 1340

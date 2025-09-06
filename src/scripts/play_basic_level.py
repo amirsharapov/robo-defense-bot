@@ -1,4 +1,5 @@
-from src.game import client, controls
+import src.game.client
+from src.game import client
 
 
 def place_towers_for_basic_level():
@@ -14,7 +15,7 @@ def place_towers_for_basic_level():
     ])
 
     # break for fast-forward button
-    controls.toggle_fast_forward_button()
+    src.game.client.enable_fast_forward()
 
     # next line of towers to keep path blocked
     client.update_tiles([
@@ -61,9 +62,9 @@ def place_towers_for_basic_level():
         (5, 5, 'gu3'),
         (5, 6, 'gu3'),
         (5, 7, 'gu3'),
-        (5, 8, 'gu3'),
-        (5, 9, 'gu3'),
-        (5, 10, 'gu3'),
+        (5, 8, 'aa2'),
+        (5, 9, 'aa2'),
+        (5, 10, 'aa2'),
         (5, 11, 'gu3'),
         (5, 12, 'gu3'),
         (5, 13, 'gu3'),

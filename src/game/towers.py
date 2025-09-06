@@ -2,7 +2,12 @@ from dataclasses import dataclass
 from functools import cache, cached_property
 from typing import Literal
 
-from src.game.constants import TOWER_MENU_BR_XY, TOWER_MENU_TR_XY, TOWER_MENU_BL_XY, TOWER_MENU_TL_XY
+from src.game.constants import (
+    TOWER_MENU_BR_XY,
+    TOWER_MENU_TR_XY,
+    TOWER_MENU_BL_XY,
+    TOWER_MENU_TL_XY
+)
 from src.libs.geometry import Point
 
 

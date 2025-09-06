@@ -1,18 +1,23 @@
 from enum import auto
 
-from src.game import grid
+from src.game import grid, utils
 from src.game.grid import GridTile, generate_tile_grid, AnchorTypes
-from src.game.vision import locate_exit_anchor
 from src.libs.enums import BaseEnum
 
 _tile_grid: list[list['GridTile']] | None = None
 _camera_position: 'CameraPositions | None' = None
+_is_paused: bool = False
+_is_fast_forward: bool = False
 
 
 class CameraPositions(BaseEnum):
     DEFAULT = auto()
     TOP = auto()
     BOTTOM = auto()
+
+
+def locate_exit_anchor():
+    return utils.get_first_template_match('game/basic_level/anchor.png')
 
 
 def get_tile_grid():
@@ -28,7 +33,7 @@ def get_tile_grid():
     return _tile_grid
 
 
-def update_tile_grid_positions():
+def refresh_tile_grid_positions():
     global _tile_grid
     anchor = locate_exit_anchor()
 
@@ -40,7 +45,7 @@ def update_tile_grid_positions():
         print("Could not find exit anchor to update tile grid positions.")
         return
 
-    grid.update_tile_grid_positions(
+    grid.update_existing_tile_grid_rects(
         _tile_grid,
         AnchorTypes.EXIT,
         anchor.rect
@@ -55,3 +60,23 @@ def get_camera_position() -> 'CameraPositions':
 def set_camera_position(position: 'CameraPositions'):
     global _camera_position
     _camera_position = position
+
+
+def is_paused() -> bool:
+    global _is_paused
+    return _is_paused
+
+
+def set_paused(paused: bool):
+    global _is_paused
+    _is_paused = paused
+
+
+def is_fast_forward_enabled() -> bool:
+    global _is_fast_forward
+    return _is_fast_forward
+
+
+def set_fast_forward(fast_forward: bool):
+    global _is_fast_forward
+    _is_fast_forward = fast_forward

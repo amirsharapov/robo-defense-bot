@@ -6,6 +6,10 @@ from src.libs.enums import BaseEnum
 from src.libs.geometry import Rectangle
 
 
+N_ROWS = 10
+N_COLS = 18
+
+
 class AnchorTypes(BaseEnum):
     EXIT = auto()
 
@@ -20,7 +24,7 @@ class GridTile:
         return get_tower(self.tower_id)
 
 
-def update_tile_grid_positions(grid: list[list[GridTile]], anchor_type: AnchorTypes, anchor_rect: Rectangle):
+def update_existing_tile_grid_rects(grid: list[list[GridTile]], anchor_type: AnchorTypes, anchor_rect: Rectangle):
     assert anchor_type == AnchorTypes.EXIT, "Currently only EXIT anchor is supported"
 
     new_grid = generate_tile_grid(
@@ -30,24 +34,22 @@ def update_tile_grid_positions(grid: list[list[GridTile]], anchor_type: AnchorTy
 
     for row_i, row in enumerate(grid):
         for col_i, tile in enumerate(row):
-            tile.rect.overwrite(new_grid[row_i][col_i].rect)
+            tile.rect = new_grid[row_i][col_i].rect
 
 
 def generate_tile_grid(anchor_type: AnchorTypes, anchor_rect: Rectangle):
     assert anchor_type == AnchorTypes.EXIT, "Currently only EXIT anchor is supported"
 
-    n_cols = 18
-    n_rows = 10
     cell_w = 66
     cell_h = 66
 
-    origin_x = anchor_rect.x - (n_cols * cell_w)
+    origin_x = anchor_rect.x - (N_COLS * cell_w)
     origin_y = anchor_rect.y - (5 * cell_h)  # anchor is in the middle of the right edge
 
     matrix = []
-    for row_i in range(n_rows):
+    for row_i in range(N_ROWS):
         row = []
-        for col_i in range(n_cols):
+        for col_i in range(N_COLS):
             tile_x = origin_x + (col_i * 66)
             tile_y = origin_y + (row_i * 66)
             row.append(
