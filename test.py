@@ -1,16 +1,10 @@
 import cv2
 
-from src.game.utils import get_template_matches
+from src.game.planner import read_plan
 
 
 def test():
-    image = cv2.imread('local/screenshots/screenshot18.png')
-    matches = get_template_matches(
-        template_name='game/tower_upgrades/gu3.png',
-        image=image
-    )
-
-    assert len(matches) == 1, f'Expected 1 match, got {len(matches)}'
+    read_plan('data/src/plans/basic_level_v1/1')
 
 
 if __name__ == "__main__":
