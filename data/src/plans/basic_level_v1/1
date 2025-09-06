@@ -2,6 +2,7 @@ $ meta:
 
 - name: phase_1
 - description: Initial placement of gun turrets for land defense prior to turning on fast forward.
+- previous_plan: null
 
 $ final_state:
 

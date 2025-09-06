@@ -1,9 +1,13 @@
 from dataclasses import dataclass
 from pathlib import Path
 
+from src.game.constants import GRID_N_ROWS, GRID_N_COLS
+
 
 @dataclass
 class ExecutionPlan:
+    name: str | None
+    description: str | None
     commands: list['UpdateTileCommand']
 
 
@@ -26,16 +30,19 @@ def parse_plan(path: str | Path) -> dict:
 
     current_section = None
 
+    # tile update order specific context
+    tile_update_order_visited = set()
+
     for line in file_contents.splitlines():
         if line.strip() == '':
             continue
 
-        if line.startswith('$ final_state'):
-            current_section = 'final_state'
-            continue
-
         if line.startswith('$ meta'):
             current_section = 'meta'
+            continue
+
+        if line.startswith('$ final_state'):
+            current_section = 'final_state'
             continue
 
         if line.startswith('$ tile_update_order'):
@@ -51,6 +58,10 @@ def parse_plan(path: str | Path) -> dict:
                 author = line.removeprefix('- description:').strip()
                 plan['meta']['description'] = author
                 continue
+            if line.startswith('- previous_plan:'):
+                previous_plan = line.removeprefix('- previous_plan:').strip()
+                plan['meta']['previous_plan'] = None if previous_plan == 'null' else previous_plan
+                continue
 
         if current_section == 'final_state':
             # skip the header line
@@ -61,6 +72,8 @@ def parse_plan(path: str | Path) -> dict:
             line = line[4:].strip()
             parts = line.split('.')
             parts = parts[:-1]  # remove the trailing '.'
+            assert len(parts) == GRID_N_COLS
+
             parts = [p.removeprefix('.').removesuffix('.').strip() for p in parts]
             parts = [p if p != '' else None for p in parts]
             plan['final_state'].append(parts)
@@ -76,15 +89,7 @@ def parse_plan(path: str | Path) -> dict:
 
             if '-' in rows:
                 start, end = rows.split('-')
-                start = int(start)
-                end = int(end)
-                reverse = end < start
-                if reverse:
-                    start, end = end, start
-                if reverse:
-                    rows = list(range(int(end), int(start) - 1, -1))
-                else:
-                    rows = list(range(int(start), int(end) + 1))
+                rows = [int(start), int(end)]
             else:
                 rows = [int(rows)]
 
@@ -94,30 +99,48 @@ def parse_plan(path: str | Path) -> dict:
 
             if '-' in cols:
                 start, end = cols.split('-')
-                start = int(start)
-                end = int(end)
-                reverse = end < start
-                if reverse:
-                    start, end = end, start
-                if reverse:
-                    cols = list(range(int(end), int(start) - 1, -1))
-                else:
-                    cols = list(range(int(start), int(end) + 1))
+                cols = [int(start), int(end)]
             else:
                 cols = [int(cols)]
 
-            if len(rows) > 1 and len(cols) > 1:
-                raise ValueError("Cannot have both rows and cols be ranges")
-
-            for r in rows:
-                for c in cols:
-                    plan['tile_update_order'].append({'row': r, 'col': c})
-
+            plan['tile_update_order'].append({'rows': rows, 'cols': cols})
             continue
+
+    assert len(plan['final_state']) == GRID_N_ROWS
+
+    # filter tile order if no tower is placed in final state. NEED to be done after linking previous plan for diffs.
+
+    return plan
+
+
+def process_plan(parsed: dict):
+    # validate final state
+    assert len(parsed['final_state']) == GRID_N_ROWS
+    for row in parsed['final_state']:
+        assert len(row) == GRID_N_COLS
+
+    # validate tile update order
+    for tile in parsed['tile_update_order']:
+        assert 'rows' in tile
+        assert 'cols' in tile
+        rows, cols = tile['rows'], tile['cols']
+        assert len(rows) == 1 or len(rows) == 1, 'Cannot have both rows and cols be ranges'
+
+    plan = ExecutionPlan(
+        name=None,
+        description=None,
+        commands=[]
+    )
+
+    # todo replace final state cells with Tower objects instead of tower ids
+    # todo generate diffs between current plan and previous plan final state (if prev plan exists)
+    # todo expand tile update order
+    # todo generate `update_tile` commands from tile update order and the diffs
 
     return plan
 
 
 def read_plan(path: str | Path):
     parsed = parse_plan(path)
-    print(parsed)
+    processed = process_plan(parsed)
+    return processed

@@ -1,13 +1,10 @@
 from dataclasses import dataclass
 from enum import auto
 
+from src.game.constants import GRID_N_ROWS, GRID_N_COLS
 from src.game.towers import get_tower
 from src.libs.enums import BaseEnum
 from src.libs.geometry import Rectangle
-
-
-N_ROWS = 10
-N_COLS = 18
 
 
 class AnchorTypes(BaseEnum):
@@ -43,13 +40,13 @@ def generate_tile_grid(anchor_type: AnchorTypes, anchor_rect: Rectangle):
     cell_w = 66
     cell_h = 66
 
-    origin_x = anchor_rect.x - (N_COLS * cell_w)
+    origin_x = anchor_rect.x - (GRID_N_COLS * cell_w)
     origin_y = anchor_rect.y - (5 * cell_h)  # anchor is in the middle of the right edge
 
     matrix = []
-    for row_i in range(N_ROWS):
+    for row_i in range(GRID_N_ROWS):
         row = []
-        for col_i in range(N_COLS):
+        for col_i in range(GRID_N_COLS):
             tile_x = origin_x + (col_i * 66)
             tile_y = origin_y + (row_i * 66)
             row.append(
