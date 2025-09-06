@@ -147,7 +147,7 @@ def update_camera_position_to_fit_row_on_screen(
     camera_position = get_camera_position()
 
     threshold_top = 2
-    threshold_bottom = 6
+    threshold_bottom = 7
 
     if threshold_top < row_i < threshold_bottom:
         return

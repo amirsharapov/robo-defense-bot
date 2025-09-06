@@ -75,6 +75,11 @@ _templates = [
         use_mask=True
     ),
     Template(
+        name='game/tower_upgrades/aa2.png',
+        threshold=0.6,
+        use_mask=True
+    ),
+    Template(
         name='game/tower_upgrades/gu2.png',
         threshold=0.6,
         use_mask=True
