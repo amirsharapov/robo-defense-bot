@@ -2,19 +2,23 @@ import time
 
 import dotenv
 
-from src.game import utils
+from src.game import utils, state
 from src.libs import android, adb
 from src.scripts.play_basic_level import place_towers_for_basic_level
 
 
 def main():
     android.setup_screenshot_api_port_forwarding()
+
     if android.unlock():
         time.sleep(3)
+
     android.accept_tablet_data_permissions()
 
     # begin the loop
     while True:
+        state.reset()
+
         android.go_back()
         # android.go_to_home_screen()
         time.sleep(1)
@@ -54,6 +58,7 @@ def main():
             match = utils.get_first_template_match('game/you_win_message.png')
 
             if match:
+                time.sleep(10)
                 break
 
             time.sleep(5)

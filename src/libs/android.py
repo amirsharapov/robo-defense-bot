@@ -168,7 +168,7 @@ def swipe_using_motion_events(x1: int, y1: int, x2: int, y2: int, steps: int = 1
         line.point1.y
     )
 
-    time.sleep(0.2)
+    time.sleep(0.1)
 
     points = line.linspace(steps=steps)
     for point in points:
@@ -179,7 +179,7 @@ def swipe_using_motion_events(x1: int, y1: int, x2: int, y2: int, steps: int = 1
         )
         time.sleep(delay_between_steps)
 
-    time.sleep(0.2)
+    time.sleep(0.1)
     adb.send_motion_event(
         MotionEvents.UP,
         line.point2.x,

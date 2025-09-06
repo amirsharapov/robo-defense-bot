@@ -59,9 +59,9 @@ def place_towers_for_basic_level():
     # temporary for air defense
     
     client.update_tiles([
-        (5, 5, 'gu3'),
-        (5, 6, 'gu3'),
-        (5, 7, 'gu3'),
+        (5, 5, 'aa2'),
+        (5, 6, 'aa2'),
+        (5, 7, 'aa2'),
         (5, 8, 'aa2'),
         (5, 9, 'aa2'),
         (5, 10, 'aa2'),

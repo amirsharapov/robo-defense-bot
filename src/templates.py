@@ -70,6 +70,41 @@ _templates = [
         threshold=0.8,
     ),
     Template(
+        name='game/tower_upgrades/aa1.png',
+        threshold=0.6,
+        use_mask=True
+    ),
+    Template(
+        name='game/tower_upgrades/gu2.png',
+        threshold=0.6,
+        use_mask=True
+    ),
+    Template(
+        name='game/tower_upgrades/gu3.png',
+        threshold=0.6,
+        use_mask=True
+    ),
+    Template(
+        name='game/tower_upgrades/sa1.png',
+        threshold=0.6,
+        use_mask=True
+    ),
+    Template(
+        name='game/tower_upgrades/sa2.png',
+        threshold=0.6,
+        use_mask=True
+    ),
+    Template(
+        name='game/tower_upgrades/sl2.png',
+        threshold=0.6,
+        use_mask=True
+    ),
+    Template(
+        name='game/tower_upgrades/sl3.png',
+        threshold=0.6,
+        use_mask=True
+    ),
+    Template(
         name='game/you_win_message.png',
         threshold=0.6,
         use_mask=True

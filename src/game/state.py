@@ -33,6 +33,11 @@ def get_tile_grid():
     return _tile_grid
 
 
+def set_tile_grid(tile_grid):
+    global _tile_grid
+    _tile_grid = tile_grid
+
+
 def refresh_tile_grid_positions():
     global _tile_grid
     anchor = locate_exit_anchor()
@@ -80,3 +85,10 @@ def is_fast_forward_enabled() -> bool:
 def set_fast_forward(fast_forward: bool):
     global _is_fast_forward
     _is_fast_forward = fast_forward
+
+
+def reset():
+    set_fast_forward(False)
+    set_paused(False)
+    set_camera_position(CameraPositions.DEFAULT)
+    set_tile_grid(None)

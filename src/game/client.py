@@ -13,6 +13,7 @@ from src.game.state import (
     set_camera_position
 )
 from src.game.towers import get_tower
+from src.game.utils import get_first_template_match
 from src.libs import android, adb
 from src.libs.geometry import Line, Point
 
@@ -123,6 +124,16 @@ def upgrade_tower(
     adb.tap(x, y)
 
     time.sleep(0.5)
+
+    print('Checking if upgrade is available...')
+    match = None
+    while match is None:
+        match = get_first_template_match(f'game/tower_upgrades/{upgrade_option.target_tower_id}.png')
+        if match is not None:
+            print('Upgrade is available!')
+            break
+        print('Upgrade not available yet, waiting...')
+        time.sleep(1)
 
     x, y = upgrade_option.position_xy
     adb.tap(x, y)

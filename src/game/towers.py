@@ -198,9 +198,10 @@ def get_tower_upgrade_path(tower_id: str):
 
 @cache
 def get_tower_upgrade_options(tower_id: str) -> list[UpgradeOption]:
-    positions = ['tr', 'br', 'bl', 'tl']
+    # needs to be in the same order as we defined the upgrades above.
+    positions = ['tl', 'tr', 'bl', 'br']
     # skip "tl" position because that is sell button
-    positions = positions[:-1]
+    positions = positions[1:]
 
     target_tower_ids = get_tower_upgrades_map().get(tower_id, [])
     assert len(target_tower_ids) <= len(positions)
