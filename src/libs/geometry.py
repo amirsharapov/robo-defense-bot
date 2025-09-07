@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from functools import cached_property
 
 import numpy as np
 
@@ -36,6 +37,22 @@ class Rectangle:
     @property
     def y2(self) -> int:
         return self.y + self.h
+
+    @property
+    def top(self):
+        return self.y
+
+    @property
+    def bottom(self):
+        return self.y + self.h
+
+    @property
+    def left(self):
+        return self.x
+
+    @property
+    def right(self):
+        return self.x + self.w
 
     def __post_init__(self):
         self.w = int(self.w)

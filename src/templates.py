@@ -62,6 +62,11 @@ _templates = [
         threshold=0.8,
     ),
     Template(
+        name='game/main_menu/down_button.png',
+        threshold=0.5,
+        use_mask=True
+    ),
+    Template(
         name='game/main_menu/new_game_button.png',
         threshold=0.8,
     ),

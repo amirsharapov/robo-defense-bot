@@ -4,7 +4,6 @@ import dotenv
 
 from src.game import utils, state, planner, client
 from src.libs import android, adb
-from src.scripts.play_basic_level import place_towers_for_basic_level
 
 
 def main():
@@ -45,6 +44,15 @@ def main():
         # skipping this for now
         # game.set_difficulty_level(5)
         # time.sleep(1)
+
+        # while we are still developing OCR, use this hardcoded workaround
+        matches = utils.get_template_matches('game/main_menu/down_button.png')
+        matches = sorted(matches, key=lambda m: m.rect.top)
+        if matches:
+            match = matches[0] if matches else None
+            x, y = match.rect.center
+            adb.tap(x, y)
+            time.sleep(1)
 
         utils.tap_first_template_match('game/basic_level/start_game_button.png')
         time.sleep(1)

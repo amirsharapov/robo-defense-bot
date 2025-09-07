@@ -38,6 +38,9 @@ def update_tile(
     existing_tower = tiles[row_i][col_i].tower
     target_tower = get_tower(target_tower_id)
 
+    if target_tower is None:
+        raise ValueError(f"Target tower ID '{target_tower_id}' is invalid")
+
     upgrade_path = target_tower.upgrade_path
 
     if existing_tower is None:

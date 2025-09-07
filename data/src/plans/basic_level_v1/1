@@ -7,29 +7,43 @@ $ meta:
 $ final_grid_state:
 
    .0  .1  .2  .3  .4  .5  .6  .7  .8  .9  .10 .11 .12 .13 .14 .15 .16 .17 .
-0  .   .gu3.gu3.gu3.   .   .   .   .   .   .   .   .   .   .   .   .   .   .
+0  .gu3.gu3.sl2.gu3.gu3.gu3.sl2.gu3.   .   .   .   .   .   .   .   .   .   .
 1  .gu3.   .   .   .gu3.   .   .   .   .   .   .   .   .   .   .   .   .   .
-2  .sl2.   .gu3.   .sl2.   .   .   .   .   .   .   .   .   .   .   .   .   .
-3  .gu3.   .gu3.   .gu3.   .   .   .   .   .   .   .   .   .   .   .   .   .
-4  .gu3.   .sl3.   .gu3.   .sl2.   .   .   .sl2.   .   .   .sl2.   .   .   .
-5  .   .   .gu3.   .gu3.   .gu3.   .sa2.sa2.sa2.sa2.sa2.   .   .   .   .   .
-6  .sl2.gu3.   .   .sl2.   .gu3.   .sl2.   .   .   .sl2.   .   .   .   .   .
-7  .   .   .gu3.   .gu3.   .gu3.   .   .   .   .   .   .   .   .   .   .   .
+2  .sl2.   .gu3.   .sl2.   .gu3.   .   .   .   .   .   .   .   .   .   .   .
+3  .gu3.   .gu3.   .gu3.   .gu3.   .   .   .   .   .   .   .   .   .   .   .
+4  .gu3.   .sl3.   .gu3.   .sl2.   .   .   .sl2.   .   .   .sl2.   .gu3.gu3.
+5  .   .   .gu3.   .gu3.   .gu3.   .sa2.sa2.sa2.sa2.sa2.sa2.sa2.   .gu3.   .
+6  .sl2.gu3.gu3.   .sl2.   .gu3.   .sl2.   .   .   .sl2.   .   .   .sl2.   .
+7  .   .   .gu3.   .gu3.   .gu3.   .   .   .   .   .   .   .   .   .gu3.   .
 8  .   .   .sl2.   .   .   .sl2.   .   .   .   .   .   .   .   .   .   .   .
-9  .   .   .   .gu3.gu3.gu3.   .   .   .   .   .   .   .   .   .   .   .   .
+9  .   .   .gu3.gu3.gu3.gu3.gu3.   .   .   .   .   .   .   .   .   .   .   .
 
 $ tile_update_order:
 
 - row:6     col:0-1
 - row:5-2   col:2
 - row:0     col:3
-- row:0-9   col:4
+- row:1-7   col:4
+- row:9     col:5
+- row:8-4   col:6
 
 - row:5     col:8-10
 
-- row:9     col:5
-- row:8-7   col:6
 - row:4-1   col:0
-
+- row:0     col:1-2
 - row:7-8   col:2
 - row:9     col:3-4
+
+- row:0     col:0
+- row:0     col:4
+- row:6     col:2
+- row:9     col:2
+- row:9     col:6
+
+- row:4     col:17
+- row:4-7   col:16
+
+- row:5     col:11-14
+
+- row:3-2   col:6
+- row:0     col:5-7
