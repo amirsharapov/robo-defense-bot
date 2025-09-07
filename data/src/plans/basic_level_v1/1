@@ -24,10 +24,13 @@ $ tile_update_order:
 - row:5-2   col:2
 - row:0     col:3
 - row:1-7   col:4
+
+- row:5     col:8-9
+
 - row:9     col:5
 - row:8-4   col:6
 
-- row:5     col:8-10
+- row:5     col:10
 
 - row:4-1   col:0
 - row:0     col:1-2
