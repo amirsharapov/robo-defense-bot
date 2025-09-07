@@ -70,6 +70,21 @@ _templates = [
         threshold=0.8,
     ),
     Template(
+        name='game/tower_purchases/gu.png',
+        threshold=0.90,
+        use_mask=True
+    ),
+    Template(
+        name='game/tower_purchases/ro.png',
+        threshold=0.95,
+        use_mask=True
+    ),
+    Template(
+        name='game/tower_purchases/sl.png',
+        threshold=0.8,
+        use_mask=True
+    ),
+    Template(
         name='game/tower_upgrades/aa1.png',
         threshold=0.6,
         use_mask=True

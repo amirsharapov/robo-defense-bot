@@ -216,6 +216,8 @@ def swipe_towards_direction(direction: str | Literal['up', 'down', 'left', 'righ
         end.y
     )
 
+    time.sleep(0.25)
+
 
 MAX_X = 1340
 MAX_Y = 800

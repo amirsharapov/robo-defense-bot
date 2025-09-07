@@ -81,6 +81,15 @@ def purchase_tower(
 
     assert tower.category_id in ('gu', 'ro', 'sl'), f"Cannot place tower of type {tower.category_id}"
 
+    match = None
+    while match is None:
+        match = get_first_template_match(f'game/tower_purchases/{tower.category_id}.png')
+        if match is not None:
+            print(f'Tower purchase "{tower.category_id}" is available!')
+            break
+        print(f'Tower purchase "{tower.category_id}" not available yet, waiting...')
+        time.sleep(1)
+
     grid = get_tile_grid()
     tile = grid[row_i][col_i]
 
@@ -125,14 +134,14 @@ def upgrade_tower(
 
     time.sleep(0.5)
 
-    print('Checking if upgrade is available...')
+    print(f'Checking if upgrade "{upgrade_option.target_tower_id}" is available...')
     match = None
     while match is None:
         match = get_first_template_match(f'game/tower_upgrades/{upgrade_option.target_tower_id}.png')
         if match is not None:
             print('Upgrade is available!')
             break
-        print('Upgrade not available yet, waiting...')
+        print(f'Upgrade "{upgrade_option.target_tower_id}" not available yet, waiting...')
         time.sleep(1)
 
     x, y = upgrade_option.position_xy

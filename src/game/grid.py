@@ -13,7 +13,7 @@ class AnchorTypes(BaseEnum):
 
 @dataclass
 class GridTile:
-    rect: Rectangle
+    rect: Rectangle | None
     tower_id: str | None
 
     @property

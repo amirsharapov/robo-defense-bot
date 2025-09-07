@@ -2,7 +2,7 @@ import time
 
 import dotenv
 
-from src.game import utils, state
+from src.game import utils, state, planner, client
 from src.libs import android, adb
 from src.scripts.play_basic_level import place_towers_for_basic_level
 
@@ -18,6 +18,7 @@ def main():
     # begin the loop
     while True:
         state.reset()
+        planner.clear_plans_cache()
 
         android.go_back()
         # android.go_to_home_screen()
@@ -51,7 +52,18 @@ def main():
         android.tap_middle_of_screen()
         time.sleep(1)
 
-        place_towers_for_basic_level()
+        i = 0
+        plans = planner.get_plans_for_strategy('basic_level_v1')
+        for plan in plans:
+            for command in plan.commands:
+                client.update_tile(
+                    command.row_i,
+                    command.col_i,
+                    command.target_tower_id
+                )
+                i += 1
+                if i == 10:
+                    client.enable_fast_forward()
 
         # keep checking for the game over text
         while True:

@@ -10,6 +10,10 @@ class Rectangle:
     w: int
     h: int
 
+    @classmethod
+    def empty(cls):
+        return cls(0, 0, 0, 0)
+
     @property
     def center(self):
         return Point(
