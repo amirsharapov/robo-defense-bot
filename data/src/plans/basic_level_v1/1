@@ -11,7 +11,7 @@ $ final_grid_state:
 1  .gu3.   .   .   .gu3.   .   .   .   .   .   .   .   .   .   .   .   .   .
 2  .sl2.   .gu3.   .sl2.   .gu3.   .   .   .   .   .   .   .   .   .   .   .
 3  .gu3.   .gu3.   .gu3.   .gu3.   .   .   .   .   .   .   .   .   .   .   .
-4  .gu3.   .sl3.   .gu3.   .sl2.   .   .   .sl2.   .   .   .sl2.   .gu3.gu3.
+4  .gu3.   .sl2.   .gu3.   .sl2.   .   .   .sl2.   .   .   .sl2.   .gu3.gu3.
 5  .   .   .gu3.   .gu3.   .gu3.   .sa2.sa2.sa2.sa2.sa2.sa2.sa2.   .gu3.   .
 6  .sl2.gu3.gu3.   .sl2.   .gu3.   .sl2.   .   .   .sl2.   .   .   .sl2.   .
 7  .   .   .gu3.   .gu3.   .gu3.   .   .   .   .   .   .   .   .   .gu3.   .
