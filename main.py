@@ -19,6 +19,8 @@ def main():
     # begin the loop
     while True:
         try:
+            start = time.time()
+
             state.reset()
             planner.clear_plans_cache()
 
@@ -79,10 +81,18 @@ def main():
 
             # keep checking for the game over text
             while True:
+                # check match
                 match = utils.get_first_template_match('game/you_win_message.png')
 
                 if match:
+                    elapsed = time.time() - start
                     time.sleep(10)
+                    print(f"Level completed in {elapsed:.2f} seconds, restarting...")
+                    break
+
+                # check timeout
+                if time.time() - start > 20 * 60:
+                    print("Timeout reached, restarting...")
                     break
 
                 time.sleep(5)
