@@ -1,7 +1,7 @@
 $ meta:
 
 - name: phase_1
-- description: Initial placement of gun turrets for land defense prior to turning on fast forward.
+- description: None
 - previous_plan: null
 
 $ final_grid_state:
@@ -20,33 +20,43 @@ $ final_grid_state:
 
 $ tile_update_order:
 
+# put down the first vertical wall
 - row:6     col:0-1
 - row:5-2   col:2
+# put down the second vertical wall
 - row:0     col:3
 - row:1-7   col:4
 
+# put down two air defenses
 - row:5     col:8-9
 
+# put down the third vertical wall
 - row:9     col:5
-- row:8-4   col:6
+- row:8-2   col:6
 
+# put down one more air defense for more firepower
 - row:5     col:10
 
+# place towers opposite the first wall and against left edge for more firepower
 - row:4-1   col:0
 - row:0     col:1-2
+# place towers opposite the second wall and against bottom edge for more firepower
 - row:7-8   col:2
 - row:9     col:3-4
 
+# fill in the corners
 - row:0     col:0
 - row:0     col:4
 - row:6     col:2
 - row:9     col:2
 - row:9     col:6
 
+# place towers at the exit to catch strays
 - row:4     col:17
 - row:4-7   col:16
 
+# place down 4 more surface to air for more firepower
 - row:5     col:11-14
 
-- row:3-2   col:6
+# place down towers for the last of the third vertical wall wall
 - row:0     col:5-7
