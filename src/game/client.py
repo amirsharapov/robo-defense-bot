@@ -101,6 +101,7 @@ def purchase_tower(
         'sl': SLOW_TOWER_POSITION
     }[tower.category_id]
 
+    # need to figure out why this is.
     line = Line(
         Point(tower_x, tower_y),
         tile.rect.center.translated(dy=50)
@@ -111,7 +112,7 @@ def purchase_tower(
         line.point1.y,
         line.point2.x,
         line.point2.y,
-        steps=5
+        steps=3
     )
 
     time.sleep(0.2)
@@ -134,7 +135,7 @@ def upgrade_tower(
     x, y = tile.rect.center
     adb.tap(x, y)
 
-    time.sleep(0.5)
+    time.sleep(0.2)
 
     #todo check the current state of the game and see how much "guaranteed" cash we have to avoid waiting
     match = None
@@ -147,7 +148,7 @@ def upgrade_tower(
     x, y = upgrade_option.position_xy
     adb.tap(x, y)
 
-    time.sleep(0.5)
+    time.sleep(0.2)
 
 
 def update_camera_position_to_fit_row_on_screen(

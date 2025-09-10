@@ -22,9 +22,9 @@ def locate_exit_anchor():
 
 def get_tile_grid():
     global _tile_grid
-    anchor = locate_exit_anchor()
 
     if not _tile_grid:
+        anchor = locate_exit_anchor()
         _tile_grid = generate_tile_grid(
             AnchorTypes.EXIT,
             anchor.rect

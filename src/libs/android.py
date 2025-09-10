@@ -186,7 +186,7 @@ def swipe_using_motion_events(x1: int, y1: int, x2: int, y2: int, steps: int = 1
         line.point2.y
     )
 
-    time.sleep(0.2)
+    time.sleep(1)
 
 
 def swipe_towards_direction(direction: str | Literal['up', 'down', 'left', 'right']):
