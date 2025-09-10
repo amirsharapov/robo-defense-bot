@@ -4,15 +4,21 @@ import dotenv
 
 from src.game import utils, state, planner, client
 from src.libs import android, adb
+from src.libs.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def main():
+    logger.info("Setting up screenshot API port forwarding")
     android.setup_screenshot_api_port_forwarding()
     time.sleep(1)
 
+    logger.info("Unlocking device if locked")
     if android.unlock():
         time.sleep(3)
 
+    logger.info("Accepting tablet data permissions if prompted")
     android.accept_tablet_data_permissions()
     time.sleep(1)
 

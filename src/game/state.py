@@ -3,12 +3,14 @@ from enum import auto
 from src.game import grid, utils
 from src.game.grid import GridTile, generate_tile_grid, AnchorTypes
 from src.libs.enums import BaseEnum
+from src.libs.logging import get_logger
 
 _tile_grid: list[list['GridTile']] | None = None
 _camera_position: 'CameraPositions | None' = None
 _is_paused: bool = False
 _is_fast_forward: bool = False
 
+logger = get_logger(__name__)
 
 class CameraPositions(BaseEnum):
     DEFAULT = auto()
@@ -17,6 +19,7 @@ class CameraPositions(BaseEnum):
 
 
 def locate_exit_anchor():
+    logger.info("Locating exit anchor on the screen")
     return utils.get_first_template_match('game/basic_level/anchor.png')
 
 

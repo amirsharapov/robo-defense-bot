@@ -16,6 +16,9 @@ from src.game.towers import get_tower
 from src.game.utils import get_first_template_match
 from src.libs import android, adb
 from src.libs.geometry import Line, Point
+from src.libs.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def update_tiles(list_of_args: list[tuple]):
@@ -34,7 +37,10 @@ def update_tile(
 ):
     update_camera_position_to_fit_row_on_screen(row_i)
 
+    logger.info('Getting tile grid')
     tiles = get_tile_grid()
+
+    logger.info('Calculating upgrade path')
     existing_tower = tiles[row_i][col_i].tower
     target_tower = get_tower(target_tower_id)
 
@@ -84,13 +90,15 @@ def purchase_tower(
 
     assert tower.category_id in ('gu', 'ro', 'sl'), f"Cannot place tower of type {tower.category_id}"
 
+    logger.info('Checking to see if tower is available for purchase')
     #todo check the current state of the game and see how much "guaranteed" cash we have to avoid waiting
-    match = None
+    i, match = 1, None
     while match is None:
+        time.sleep(0.3 if i < 5 else 1)
         match = get_first_template_match(f'game/tower_purchases/{tower.category_id}.png')
         if match is not None:
             break
-        time.sleep(1)
+    logger.info('Tower available for purchase')
 
     grid = get_tile_grid()
     tile = grid[row_i][col_i]
@@ -107,6 +115,7 @@ def purchase_tower(
         tile.rect.center.translated(dy=50)
     )
 
+    logger.info('Dropping tower on the map')
     android.swipe_using_motion_events(
         line.point1.x,
         line.point1.y,
@@ -114,8 +123,7 @@ def purchase_tower(
         line.point2.y,
         steps=3
     )
-
-    time.sleep(0.2)
+    logger.info('Tower dropped')
 
 
 def upgrade_tower(
@@ -135,15 +143,15 @@ def upgrade_tower(
     x, y = tile.rect.center
     adb.tap(x, y)
 
-    time.sleep(0.2)
-
+    logger.info('Checking to see if upgrade option is available')
     #todo check the current state of the game and see how much "guaranteed" cash we have to avoid waiting
-    match = None
+    i, match = 1, None
     while match is None:
+        time.sleep(0.3 if i < 5 else 1)
         match = get_first_template_match(f'game/tower_upgrades/{upgrade_option.target_tower_id}.png')
         if match is not None:
             break
-        time.sleep(1)
+    logger.info('Upgrade option available')
 
     x, y = upgrade_option.position_xy
     adb.tap(x, y)

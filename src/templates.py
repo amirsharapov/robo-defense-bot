@@ -77,7 +77,9 @@ _templates = [
     Template(
         name='game/tower_purchases/gu.png',
         threshold=0.90,
-        use_mask=True
+        use_mask=True,
+        # todo implement memorize region
+        # memorize_region=True
     ),
     Template(
         name='game/tower_purchases/ro.png',
@@ -106,6 +108,16 @@ _templates = [
     ),
     Template(
         name='game/tower_upgrades/gu3.png',
+        threshold=0.6,
+        use_mask=True
+    ),
+    Template(
+        name='game/tower_upgrades/mo1.png',
+        threshold=0.6,
+        use_mask=True
+    ),
+    Template(
+        name='game/tower_upgrades/mo2.png',
         threshold=0.6,
         use_mask=True
     ),
