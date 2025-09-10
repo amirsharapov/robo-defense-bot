@@ -1,0 +1,83 @@
+$ meta:
+
+- name: phase_1
+- description: None
+- previous_plan: null
+
+$ final_grid_state:
+
+   .0  .1  .2  .3  .4  .5  .6  .7  .8  .9  .10 .11 .12 .13 .14 .15 .16 .17 .
+0  .mo2.gu3.sl2.gu3.mo2.gu3.sl2.gu3.mo2.   .   .   .   .gu3.sl2.gu3.   .   .
+1  .gu3.   .   .   .gu3.   .   .   .gu3.   .   .   .gu3.   .   .   .gu3.   .
+2  .sl2.   .gu3.   .sl2.   .gu3.   .sl2.   .   .   .sl2.   .gu3.   .sl2.   .
+3  .gu3.   .gu3.   .gu3.   .gu3.   .gu3.   .   .   .gu3.   .gu3.   .gu3.   .
+4  .gu3.   .sl2.   .gu3.   .sl2.   .gu3.sa2.sl2.sa2.gu3.   .sl2.   .gu3.gu3.
+5  .   .   .gu3.   .gu3.   .gu3.   .sa2.sa2.sa2.sa2.sa2.   .gu3.   .gu3.   .
+6  .sl2.gu3.gu3.   .sl2.   .gu3.   .sl2.sa2.sa2.sa2.sl2.   .gu3.   .sl2.   .
+7  .   .   .gu3.   .gu3.   .gu3.   .gu3.gu3.sl2.gu3.gu3.   .gu3.   .gu3.   .
+8  .   .   .sl2.   .   .   .sl2.   .   .   .   .   .   .   .sl2.   .   .   .
+9  .   .   .mo2.gu3.gu3.gu3.mo2.gu3.sl2.gu3.gu3.gu3.sl2.gu3.mo2.gu3.gu3.gu3.
+
+$ tile_update_order:
+
+# put down the first vertical wall
+- row:6     col:0-1
+- row:5-2   col:2
+# put down the second vertical wall
+- row:0     col:3
+- row:1-7   col:4
+
+# put down two air defenses
+- row:5     col:9-10
+
+# put down the third vertical wall
+- row:9     col:5
+- row:8-2   col:6
+
+# put down one more air defense for more firepower
+- row:5     col:11
+
+# place towers at the exit to catch strays
+- row:4     col:17
+- row:4-7   col:16
+
+# put down the fourth vertical wall
+- row:0     col:7
+- row:1-7   col:8
+
+# put down one more air defense for more firepower
+- row:5     col:12
+
+# put down the fifth wall
+- row:9     col:13
+- row:8-2   col:14
+
+# put down the 6th and final wall
+- row:0     col:15
+- row:1-3   col:16
+
+# fill in gaps (up to vertical wall 2)
+- row:4-1   col:0
+- row:0     col:1-2
+
+# fill in gaps (up to vertical wall 3)
+- row:7-8   col:2
+- row:9     col:3-4
+
+# fill in gaps (up to vertical wall 4)
+- row:0     col:5-6
+
+# fill in gaps (up to vertical wall 5)
+- row:7     col:9-12
+- row:9     col:7-12
+- row:6-1   col:12
+
+# fill in gaps (up to vertical wall 6)
+- row:0     col:13-14
+
+# fill in last gaps
+- row:9     col:15-17
+
+# place last of air defenses and 1 slow tower
+- row:4     col:9-11
+- row:6     col:9-11

@@ -66,7 +66,7 @@ def main():
             time.sleep(1)
 
             i = 0
-            plans = planner.get_plans_for_strategy('basic_level_map_lvl_20_farm')
+            plans = planner.get_plans_for_strategy('basic_level_map_full_snake')
             for plan in plans:
                 for command in plan.commands:
                     client.update_tile(
@@ -87,7 +87,7 @@ def main():
                 if match:
                     elapsed = time.time() - start
                     elapsed /= 60
-                    time.sleep(10)
+                    time.sleep(3)
                     print(f"Level completed in {elapsed:.1f} minutes, restarting...")
                     break
 
