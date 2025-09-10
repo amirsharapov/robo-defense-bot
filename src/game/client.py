@@ -84,6 +84,7 @@ def purchase_tower(
 
     assert tower.category_id in ('gu', 'ro', 'sl'), f"Cannot place tower of type {tower.category_id}"
 
+    #todo check the current state of the game and see how much "guaranteed" cash we have to avoid waiting
     match = None
     while match is None:
         match = get_first_template_match(f'game/tower_purchases/{tower.category_id}.png')
@@ -135,6 +136,7 @@ def upgrade_tower(
 
     time.sleep(0.5)
 
+    #todo check the current state of the game and see how much "guaranteed" cash we have to avoid waiting
     match = None
     while match is None:
         match = get_first_template_match(f'game/tower_upgrades/{upgrade_option.target_tower_id}.png')
