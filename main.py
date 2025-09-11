@@ -1,10 +1,12 @@
 import time
 
+import cv2
 import dotenv
 
 from src.game import utils, state, planner, client
 from src.libs import android, adb
 from src.libs.logging import get_logger
+from src.libs.utils import get_next_local_screenshot_filename
 
 logger = get_logger(__name__)
 
@@ -82,10 +84,12 @@ def main():
                 if match:
                     elapsed = (time.time() - start) / 60
                     print(f"Level completed in {elapsed:.1f} minutes, restarting...")
-                    break
-
-                if time.time() - start > (25 * 60):
-                    print("Timeout reached, restarting...")
+                    for i in range(3):
+                        image = android.screenshot_with_api()
+                        image_path = get_next_local_screenshot_filename()
+                        cv2.imwrite(image_path, image)
+                        print(f"Saved screenshot to {image_path}")
+                        time.sleep(2)
                     break
 
                 time.sleep(5)

@@ -13,7 +13,7 @@ from src.game.state import (
     set_camera_position
 )
 from src.game.towers import get_tower
-from src.game.utils import get_first_template_match
+from src.game.utils import wait_for_first_template_match
 from src.libs import android, adb
 from src.libs.geometry import Line, Point
 from src.libs.logging import get_logger
@@ -37,10 +37,8 @@ def update_tile(
 ):
     update_camera_position_to_fit_row_on_screen(row_i)
 
-    logger.info('Getting tile grid')
     tiles = get_tile_grid()
 
-    logger.info('Calculating upgrade path')
     existing_tower = tiles[row_i][col_i].tower
     target_tower = get_tower(target_tower_id)
 
@@ -86,18 +84,16 @@ def purchase_tower(
         col_i: int,
         tower_id: str
 ):
+    # implement cash cache to avoid waiting.
     tower = get_tower(tower_id)
 
     assert tower.category_id in ('gu', 'ro', 'sl'), f"Cannot place tower of type {tower.category_id}"
 
     logger.info('Checking to see if tower is available for purchase')
-    #todo check the current state of the game and see how much "guaranteed" cash we have to avoid waiting
-    i, match = 1, None
-    while match is None:
-        time.sleep(0.3 if i < 5 else 1)
-        match = get_first_template_match(f'game/tower_purchases/{tower.category_id}.png')
-        if match is not None:
-            break
+    wait_for_first_template_match(
+        template_name=f'game/tower_purchases/{tower.category_id}.png',
+        timeout=60 * 20
+    )
     logger.info('Tower available for purchase')
 
     grid = get_tile_grid()
@@ -132,6 +128,8 @@ def upgrade_tower(
         source_tower_id: str,
         target_tower_id: str,
 ):
+    # implement cash cache to avoid waiting.
+
     grid = get_tile_grid()
     tile = grid[tile_row_index][tile_col_index]
 
@@ -143,14 +141,13 @@ def upgrade_tower(
     x, y = tile.rect.center
     adb.tap(x, y)
 
+    time.sleep(0.2)
+
     logger.info('Checking to see if upgrade option is available')
-    #todo check the current state of the game and see how much "guaranteed" cash we have to avoid waiting
-    i, match = 1, None
-    while match is None:
-        time.sleep(0.3 if i < 5 else 1)
-        match = get_first_template_match(f'game/tower_upgrades/{upgrade_option.target_tower_id}.png')
-        if match is not None:
-            break
+    wait_for_first_template_match(
+        template_name=f'game/tower_upgrades/{upgrade_option.target_tower_id}.png',
+        timeout=60 * 20
+    )
     logger.info('Upgrade option available')
 
     x, y = upgrade_option.position_xy

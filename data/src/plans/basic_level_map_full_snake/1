@@ -67,6 +67,10 @@ $ tile_update_order:
 # fill in gaps (up to vertical wall 4)
 - row:0     col:5-6
 
+# place last of air defenses and 1 slow tower
+- row:4     col:9-11
+- row:6     col:9-11
+
 # fill in gaps (up to vertical wall 5)
 - row:7     col:9-12
 - row:9     col:7-12
@@ -77,7 +81,3 @@ $ tile_update_order:
 
 # fill in last gaps
 - row:9     col:15-17
-
-# place last of air defenses and 1 slow tower
-- row:4     col:9-11
-- row:6     col:9-11
