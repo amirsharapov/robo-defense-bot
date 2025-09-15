@@ -65,7 +65,7 @@ def main():
             time.sleep(1)
 
             i = 0
-            plans = planner.get_plans_for_strategy('basic_level_map_full_snake')
+            plans = planner.get_plans_for_strategy('basic_level_map_v3')
             for plan in plans:
                 for command in plan.commands:
                     client.update_tile(
@@ -75,7 +75,7 @@ def main():
                     )
                     time.sleep(0.1)
                     i += 1
-                    if i == 10:
+                    if i == 15:
                         client.enable_fast_forward()
 
             while True:
@@ -95,7 +95,7 @@ def main():
                 time.sleep(5)
 
         except Exception as e:
-            print(f"Error occurred: {e}")
+            print(f"Error occurred: {type(e).__name__}: {e}")
             continue
 
 

@@ -1,0 +1,38 @@
+$ meta:
+
+- name: phase_2
+- description: Place down additional air defense, end gate turrets and upgrade center
+- previous_plan: phase_1
+
+$ final_grid_state:
+
+   .0  .1  .2  .3  .4  .5  .6  .7  .8  .9  .10 .11 .12 .13 .14 .15 .16 .17 .
+0  .   .gu1.gu1.gu1.   .   .   .   .   .   .   .   .   .   .   .   .   .   .
+1  .gu1.   .   .   .gu1.   .   .   .   .   .   .   .   .   .   .   .   .   .
+2  .sl1.   .gu1.   .sl1.   .gu1.   .   .   .   .   .   .   .   .   .   .   .
+3  .gu1.   .gu1.   .gu1.   .gu1.   .   .   .   .   .   .   .   .   .   .   .
+4  .gu3.   .sl1.   .gu3.   .sl1.   .   .   .sl1.   .   .   .   .   .gu3.   .
+5  .   .   .gu3.   .gu3.   .gu3.   .sa2.sa2.   .   .   .   .   .   .   .   .
+6  .sl1.gu3.gu3.   .sl1.   .gu3.   .sl1.   .   .   .   .   .   .   .gu3.   .
+7  .   .   .gu1.   .gu1.   .gu1.   .   .   .   .   .   .   .   .   .   .   .
+8  .   .   .sl1.   .   .   .sl1.   .   .   .   .   .   .   .   .   .   .   .
+9  .   .   .   .gu1.gu1.gu1.   .   .   .   .   .   .   .   .   .   .   .   .
+
+$ tile_update_order:
+
+# place air defense, end gate turrets, and slow towers down center
+- row:5     col:9
+- row:4     col:16
+- row:6     col:16
+- row:4     col:6
+- row:6     col:8
+- row:4     col:10
+
+- row:3-2   col:6
+
+# upgrade guns down center
+- row:6     col:1-2
+- row:5     col:2
+- row:4     col:0
+- row:4-5   col:4
+- row:6-5   col:6

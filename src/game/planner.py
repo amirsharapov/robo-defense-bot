@@ -12,7 +12,7 @@ def get_plan(name: str) -> 'ExecutionPlan | None':
     return _plans_cache.get(name)
 
 
-def set_plan(name: str, plan: 'ExecutionPlan'):
+def save_plan_to_cache(name: str, plan: 'ExecutionPlan'):
     global _plans_cache
     if name in _plans_cache:
         raise ValueError(f"Plan with name {name} already exists in cache")
@@ -96,7 +96,7 @@ def parse_plan(path: str | Path) -> dict:
             line = line[4:].strip()
             parts = line.split('.')
             parts = parts[:-1]  # remove the trailing '.'
-            assert len(parts) == GRID_N_COLS
+            assert len(parts) == GRID_N_COLS, f"Expected {GRID_N_COLS} columns, got {len(parts)} in line: {line}"
 
             parts = [p.removeprefix('.').removesuffix('.').strip() for p in parts]
             parts = [p if p != '' else None for p in parts]
@@ -137,20 +137,20 @@ def process_plan(parsed: dict):
     # validate final state
     assert len(parsed['final_grid_state']) == GRID_N_ROWS
     for row in parsed['final_grid_state']:
-        assert len(row) == GRID_N_COLS
+        assert len(row) == GRID_N_COLS, f"Expected {GRID_N_COLS} columns, got {len(row)}"
 
     # validate tile update order
     for tile in parsed['tile_update_order']:
-        assert 'rows' in tile
-        assert 'cols' in tile
+        assert 'rows' in tile, f'Tile object missing rows: {tile}'
+        assert 'cols' in tile, f'Tile object missing cols: {tile}'
         rows, cols = tile['rows'], tile['cols']
         assert len(rows) == 1 or len(cols) == 1, 'Cannot have both rows and cols be ranges'
-        assert len(cols) in (1, 2)
-        assert len(rows) in (1, 2)
+        assert len(cols) in (1, 2), f'Expected cols to have length 1 or 2, got {len(cols)}'
+        assert len(rows) in (1, 2), f'Expected rows to have length 1 or 2, got {len(rows)}'
         for r in rows:
-            assert 0 <= r < GRID_N_ROWS
+            assert 0 <= r < GRID_N_ROWS, f'Row index {r} out of bounds. Expected 0 <= r < {GRID_N_ROWS}'
         for c in cols:
-            assert 0 <= c < GRID_N_COLS
+            assert 0 <= c < GRID_N_COLS, f'Col index {c} out of bounds. Expected 0 <= c < {GRID_N_COLS}'
 
     plan = ExecutionPlan(
         name=parsed['meta']['name'],
@@ -235,7 +235,7 @@ def get_plans_for_strategy(strategy: str) -> list[ExecutionPlan]:
     for file in files:
         file = plans_dir / str(file)
         plan = read_plan(file)
-        set_plan(plan.name, plan)
+        save_plan_to_cache(plan.name, plan)
         plans.append(plan)
 
     return plans

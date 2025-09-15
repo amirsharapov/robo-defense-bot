@@ -204,7 +204,7 @@ def get_tower_upgrade_options(tower_id: str) -> list[UpgradeOption]:
     positions = positions[1:]
 
     target_tower_ids = get_tower_upgrades_map().get(tower_id, [])
-    assert len(target_tower_ids) <= len(positions)
+    assert len(target_tower_ids) <= len(positions), f"Not enough positions defined for tower {tower_id} upgrades"
 
     result = []
     for position, target_tower_id in zip(positions, target_tower_ids):

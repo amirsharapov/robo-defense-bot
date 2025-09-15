@@ -1,0 +1,49 @@
+$ meta:
+
+- name: phase_4
+- description: Place down additional rest of the mortars, air defenses and upgrade slow towers to max
+- previous_plan: phase_3
+
+$ final_grid_state:
+
+   .0  .1  .2  .3  .4  .5  .6  .7  .8  .9  .10 .11 .12 .13 .14 .15 .16 .17 .
+0  .mo2.gu3.gu3.gu3.mo2.   .   .   .   .   .   .   .   .   .   .   .   .   .
+1  .gu3.   .   .   .gu3.   .   .   .   .   .   .   .   .   .   .   .   .   .
+2  .sl3.   .gu3.   .sl3.   .gu3.   .   .   .   .   .   .   .   .   .   .   .
+3  .gu3.   .gu3.   .gu3.   .gu3.   .   .sa2.sa2.sa2.   .   .   .   .   .   .
+4  .gu3.   .sl3.   .gu3.   .sl3.   .sa2.sa2.sl3.sa2.sa2.   .   .   .gu3.   .
+5  .   .   .gu3.   .gu3.   .gu3.   .sa2.sa2.sa2.sa2.sa2.   .   .   .   .   .
+6  .sl3.gu3.gu3.   .sl3.   .gu3.   .sl3.sa2.sa2.sa2.sl3.   .   .   .gu3.   .
+7  .mo2.mo2.gu3.   .gu3.   .gu3.   .   .sa2.sa2.sa2.   .   .   .   .   .   .
+8  .mo2.mo2.sl3.   .   .   .sl3.   .   .   .   .   .   .   .   .   .   .   .
+9  .mo2.mo2.mo2.gu3.gu3.gu3.mo2.   .   .   .   .   .   .   .   .   .   .   .
+
+$ tile_update_order:
+
+# 2 mortars, 2 air defense
+- row:7     col:0-1
+- row:4     col:8-9
+- row:6     col:9
+
+- row:6     col:0
+- row:4     col:2
+- row:2     col:0
+- row:2     col:4
+- row:6     col:4
+- row:8     col:2
+- row:8     col:6
+- row:4     col:6
+- row:6     col:8
+- row:4     col:10
+- row:6     col:12
+
+- row:0     col:0
+- row:0     col:4
+- row:6     col:10-11
+- row:8     col:0-1
+- row:4     col:11-12
+- row:9     col:0-2
+
+- row:3     col:9-11
+- row:7     col:9-11
+

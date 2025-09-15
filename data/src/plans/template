@@ -2,6 +2,7 @@ $ meta:
 
 - name: X
 - description: X
+- previous_plan: null
 
 $ final_grid_state:
 
@@ -17,6 +18,6 @@ $ final_grid_state:
 8  .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .
 9  .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .
 
-$ update_order:
+$ tile_update_order:
 
 R,C

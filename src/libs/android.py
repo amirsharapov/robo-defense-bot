@@ -12,6 +12,7 @@ from src.libs.adb import WakefulnessStates, send_power_keyevent, swipe, MotionEv
 from src.libs.enums import BaseEnum
 from src.libs.geometry import Point, Line
 from src.libs.io import TemporaryFile
+from src.libs.subprocess import ExecuteCommnadResponse
 from src.libs.utils import first_or_none
 from src.libs.vision import match_template
 
@@ -131,16 +132,19 @@ def unlock() -> bool:
 def setup_screenshot_api_port_forwarding():
     local_port = env.SCREENSHOT_API_URL.get().split(':')[-1]
     device_port = 8080
-    result = None
+    e: Exception | None = None
+    result: ExecuteCommnadResponse | None = None
 
     for i in range(2):
         try:
             result = adb.forward(local_port, device_port)
-        except Exception as e:
+        except Exception as _e:
+            e = _e
             print(f"Attempt {i + 1} failed: {e}")
             time.sleep(1)
 
-    print(result.stdout)
+    if not result:
+        raise e
 
 
 def tap_middle_of_screen():

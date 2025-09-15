@@ -1,0 +1,30 @@
+<html>
+<head>
+    <script>
+        console.log("Hello, World!");
+        const refreshImage = () => {
+            const img = document.querySelector('#image-container img');
+            if (!img) {
+                return;
+            }
+            jpeg_url = "http://127.0.0.1:8080" + "/?t=" + new Date().getTime();
+            img.src = jpeg_url;
+            setTimeout(refreshImage, 250);
+        }
+        window.onload = function() {
+            const container = document.getElementById('image-container');
+            const img = document.createElement('img');
+            container.appendChild(img);
+            refreshImage();
+        }
+    </script>
+    <style>
+        html {
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <div id="image-container"></div>
+</body>
+</html>

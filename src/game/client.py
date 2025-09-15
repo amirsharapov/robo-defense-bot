@@ -35,48 +35,59 @@ def update_tile(
         col_i: int,
         target_tower_id: str | None
 ):
-    update_camera_position_to_fit_row_on_screen(row_i)
+    exceptions = []
+    for i in range(3):
+        try:
+            update_camera_position_to_fit_row_on_screen(row_i)
 
-    tiles = get_tile_grid()
+            tiles = get_tile_grid()
 
-    existing_tower = tiles[row_i][col_i].tower
-    target_tower = get_tower(target_tower_id)
+            existing_tower = tiles[row_i][col_i].tower
+            target_tower = get_tower(target_tower_id)
 
-    if target_tower is None:
-        raise ValueError(f"Target tower ID '{target_tower_id}' is invalid")
+            if target_tower is None:
+                raise ValueError(f"Target tower ID '{target_tower_id}' is invalid")
 
-    upgrade_path = target_tower.upgrade_path
+            upgrade_path = target_tower.upgrade_path
 
-    if existing_tower is None:
-        first_tower = upgrade_path[0]
-        purchase_tower(
-            row_i,
-            col_i,
-            first_tower.id
-        )
-        current_tower = first_tower
-        upgrade_i = 0
-        tiles[row_i][col_i].tower_id = first_tower.id
+            if existing_tower is None:
+                first_tower = upgrade_path[0]
+                purchase_tower(
+                    row_i,
+                    col_i,
+                    first_tower.id
+                )
+                current_tower = first_tower
+                upgrade_i = 0
+                tiles[row_i][col_i].tower_id = first_tower.id
 
-    else:
-        assert existing_tower in upgrade_path, f"Cannot upgrade from {existing_tower.id} to {target_tower.id}"
-        current_tower = existing_tower
-        upgrade_i = upgrade_path.index(existing_tower)
+            else:
+                assert existing_tower in upgrade_path, f"Cannot upgrade from {existing_tower.id} to {target_tower.id}"
+                current_tower = existing_tower
+                upgrade_i = upgrade_path.index(existing_tower)
 
-    upgrade_path = upgrade_path[upgrade_i + 1:]
+            upgrade_path = upgrade_path[upgrade_i + 1:]
 
-    if not upgrade_path:
-        return
+            if not upgrade_path:
+                return
 
-    for tower in upgrade_path:
-        upgrade_tower(
-            row_i,
-            col_i,
-            current_tower.id,
-            tower.id
-        )
-        tiles[row_i][col_i].tower_id = tower.id
-        current_tower = tower
+            for tower in upgrade_path:
+                upgrade_tower(
+                    row_i,
+                    col_i,
+                    current_tower.id,
+                    tower.id
+                )
+                tiles[row_i][col_i].tower_id = tower.id
+                current_tower = tower
+
+        except Exception as e:
+            logger.warning(f"Attempt {i + 1} to update tile at ({row_i}, {col_i}) to '{target_tower_id}' failed: {type(e).__name__}: {e}")
+            exceptions.append(e)
+            time.sleep(1)
+
+    if exceptions:
+        raise exceptions[-1]
 
 
 def purchase_tower(
@@ -92,7 +103,8 @@ def purchase_tower(
     logger.info('Checking to see if tower is available for purchase')
     wait_for_first_template_match(
         template_name=f'game/tower_purchases/{tower.category_id}.png',
-        timeout=60 * 20
+        timeout=60 * 20,
+        raise_on_timeout=True
     )
     logger.info('Tower available for purchase')
 
@@ -143,11 +155,31 @@ def upgrade_tower(
 
     time.sleep(0.2)
 
+    # Check if upgrade option is immediately available. If not after 1 second, check if the sell option is present
+    # If sell option is not present, it means the tower was not placed, so raise an error
     logger.info('Checking to see if upgrade option is available')
-    wait_for_first_template_match(
+
+    found = wait_for_first_template_match(
         template_name=f'game/tower_upgrades/{upgrade_option.target_tower_id}.png',
-        timeout=60 * 20
+        timeout=1,
+        raise_on_timeout=False
     )
+
+    if not found:
+        found = wait_for_first_template_match(
+            template_name='game/tower_upgrades/sell.png',
+            timeout=1,
+            raise_on_timeout=False
+        )
+        if not found:
+            raise Exception(f"Could not find upgrade option or sell option for tower {source_tower_id} at ({tile_row_index}, {tile_col_index}). Is the tower placed?")
+
+        wait_for_first_template_match(
+            template_name=f'game/tower_upgrades/{upgrade_option.target_tower_id}.png',
+            timeout=60 * 20,
+            raise_on_timeout=True
+        )
+
     logger.info('Upgrade option available')
 
     x, y = upgrade_option.position_xy
